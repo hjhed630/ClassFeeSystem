@@ -1,9 +1,22 @@
 # coding:utf-8
-from qfluentwidgets import (SwitchSettingCard, FolderListSettingCard,
-                            OptionsSettingCard, PushSettingCard,
-                            HyperlinkCard, PrimaryPushSettingCard, ScrollArea,
-                            ComboBoxSettingCard, ExpandLayout, Theme, CustomColorSettingCard,
-                            setTheme, setThemeColor, isDarkTheme, setFont)
+import webbrowser
+from qfluentwidgets import (
+    SwitchSettingCard,
+    FolderListSettingCard,
+    OptionsSettingCard,
+    PushSettingCard,
+    HyperlinkCard,
+    PrimaryPushSettingCard,
+    ScrollArea,
+    ComboBoxSettingCard,
+    ExpandLayout,
+    Theme,
+    CustomColorSettingCard,
+    setTheme,
+    setThemeColor,
+    isDarkTheme,
+    setFont,
+)
 from qfluentwidgets import FluentIcon as FIF
 from qfluentwidgets import SettingCardGroup as CardGroup
 from qfluentwidgets import InfoBar
@@ -19,14 +32,13 @@ from ..common.style_sheet import StyleSheet
 
 class SettingCardGroup(CardGroup):
 
-   def __init__(self, title: str, parent=None):
-       super().__init__(title, parent)
-       setFont(self.titleLabel, 14, QFont.Weight.DemiBold)
-
+    def __init__(self, title: str, parent=None):
+        super().__init__(title, parent)
+        setFont(self.titleLabel, 14, QFont.Weight.DemiBold)
 
 
 class SettingInterface(ScrollArea):
-    """ Setting interface """
+    """Setting interface"""
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
@@ -37,47 +49,44 @@ class SettingInterface(ScrollArea):
         self.settingLabel = QLabel("设置", self)
 
         # personalization
-        self.personalGroup = SettingCardGroup(
-            "个性设置", self.scrollWidget)
+        self.personalGroup = SettingCardGroup("个性设置", self.scrollWidget)
         self.micaCard = SwitchSettingCard(
             FIF.TRANSPARENT,
             "云母效果",
             "应用以改变你的窗口样式",
             cfg.micaEnabled,
-            self.personalGroup
+            self.personalGroup,
         )
         self.themeCard = ComboBoxSettingCard(
             cfg.themeMode,
             FIF.BRUSH,
             "应用主题",
             "改变你的应用主题",
-            texts=[
-                "明亮", "黑暗",
-                "使用系统设置"
-            ],
-            parent=self.personalGroup
+            texts=["明亮", "黑暗", "使用系统设置"],
+            parent=self.personalGroup,
         )
         self.zoomCard = ComboBoxSettingCard(
             cfg.dpiScale,
             FIF.ZOOM,
             "窗口缩放",
             "改变控件和字体的大小",
-            texts=[
-                "100%", "125%", "150%", "175%", "200%",
-                "使用系统设置"
-            ],
-            parent=self.personalGroup
+            texts=["100%", "125%", "150%", "175%", "200%", "使用系统设置"],
+            parent=self.personalGroup,
         )
-        
+
         # application
         self.aboutGroup = SettingCardGroup("关于软件", self.scrollWidget)
         self.aboutCard = PrimaryPushSettingCard(
             "打开软件开源仓库",
             ":/app/images/logo.png",
-            self.tr('About'),
-            '© ' + self.tr('Copyright') + f" {YEAR}, {AUTHOR}. " +
-            self.tr('Version') + " " + VERSION,
-            self.aboutGroup
+            self.tr("About"),
+            "© "
+            + self.tr("Copyright")
+            + f" {YEAR}, {AUTHOR}. "
+            + self.tr("Version")
+            + " "
+            + VERSION,
+            self.aboutGroup,
         )
 
         self.__initWidget()
@@ -88,12 +97,12 @@ class SettingInterface(ScrollArea):
         self.setViewportMargins(0, 100, 0, 20)
         self.setWidget(self.scrollWidget)
         self.setWidgetResizable(True)
-        self.setObjectName('settingInterface')
+        self.setObjectName("settingInterface")
 
         # initialize style sheet
         setFont(self.settingLabel, 23, QFont.Weight.DemiBold)
-        self.scrollWidget.setObjectName('scrollWidget')
-        self.settingLabel.setObjectName('settingLabel')
+        self.scrollWidget.setObjectName("scrollWidget")
+        self.settingLabel.setObjectName("settingLabel")
         StyleSheet.SETTING_INTERFACE.apply(self)
         self.scrollWidget.setStyleSheet("QWidget{background:transparent}")
 
@@ -119,20 +128,19 @@ class SettingInterface(ScrollArea):
         self.expandLayout.addWidget(self.aboutGroup)
 
     def _showRestartTooltip(self):
-        """ show restart tooltip """
+        """show restart tooltip"""
         InfoBar.success(
-            self.tr('Updated successfully'),
-            self.tr('Configuration takes effect after restart'),
+            self.tr("Updated successfully"),
+            self.tr("Configuration takes effect after restart"),
             duration=1500,
-            parent=self
+            parent=self,
         )
 
     def _connectSignalToSlot(self):
-        """ connect signal to slot """
+        """connect signal to slot"""
         cfg.appRestartSig.connect(self._showRestartTooltip)
 
         # personalization
         cfg.themeChanged.connect(setTheme)
         self.micaCard.checkedChanged.connect(signalBus.micaEnableChanged)
-        
-
+        self.aboutCard.clicked.connect(lambda: webbrowser.open(REPO_URL))

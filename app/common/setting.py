@@ -10,7 +10,7 @@ AUTHOR = "630"
 VERSION = "v0.0.1"
 APP_NAME = "Class Fee System"
 
-REPO_URL = "https://github.com/zhiyiYo/PyQt-Fluent-Widgets"
+REPO_URL = "https://github.com/hjhed630/ClassFeeSystem"
 
 CLASS_NAME = "安顺市第一高级中学 2026级3班"
 

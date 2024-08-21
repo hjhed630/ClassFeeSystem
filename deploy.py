@@ -8,7 +8,7 @@ from distutils.sysconfig import get_python_lib
 args = [
     'nuitka',
     '--standalone',
-    # '--windows-disable-console',
+    '--windows-disable-console',
     '--follow-import-to=app' ,
     '--plugin-enable=pyqt5' ,
     '--include-qt-plugins=sensible,styles' ,

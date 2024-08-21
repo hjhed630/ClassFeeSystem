@@ -2,11 +2,17 @@
 import os
 import shutil
 
-from PyQt5.QtCore import QUrl, QSize
+from PyQt5.QtCore import QUrl, QSize, Qt
 from PyQt5.QtGui import QIcon, QColor
 from PyQt5.QtWidgets import QApplication
 
-from qfluentwidgets import NavigationItemPosition, MSFluentWindow, SplashScreen
+from qfluentwidgets import (
+    NavigationItemPosition,
+    MSFluentWindow,
+    SplashScreen,
+    InfoBar,
+    InfoBarPosition,
+)
 from qfluentwidgets import FluentIcon as FIF
 
 from .setting_interface import SettingInterface
@@ -103,3 +109,12 @@ class MainWindow(MSFluentWindow):
                 data[-1] = os.path.basename(data[-1])
             jsonLoad({"data": data})
             self.publicityInterface.reloadData()
+            InfoBar.success(
+                title="成功",
+                content=f"班费项添加成功~\n当前剩余: {self.publicityInterface.publicityTable.returnBalance():.2f}",
+                orient=Qt.Orientation.Horizontal,
+                isClosable=True,
+                position=InfoBarPosition.TOP,
+                duration=4000,
+                parent=self,
+            )
