@@ -17,6 +17,7 @@ from qfluentwidgets import FluentIcon as FIF
 
 from .setting_interface import SettingInterface
 from .publicity_interface import PublicityInterface
+from .control_interface import ControlInterface
 from ..common.config import cfg
 from ..common.icon import Icon
 from ..common.setting import CLASS_NAME, IMG_FOLDER
@@ -32,9 +33,11 @@ class MainWindow(MSFluentWindow):
     def __init__(self):
         super().__init__()
         self.initWindow()
+        self.changedPage = [0]
 
         self.settingInterface = SettingInterface(self)
         self.publicityInterface = PublicityInterface(self)
+        self.controlInterface = ControlInterface(self)
 
         self.connectSignalToSlot()
 
@@ -63,6 +66,14 @@ class MainWindow(MSFluentWindow):
             NavigationItemPosition.TOP,
         )
 
+        self.addSubInterface(
+            self.controlInterface,
+            FIF.COMMAND_PROMPT,
+            "管理",
+            FIF.COMMAND_PROMPT,
+            position=NavigationItemPosition.BOTTOM,
+        )
+
         # add custom widget to bottom
         self.addSubInterface(
             self.settingInterface,
@@ -71,7 +82,7 @@ class MainWindow(MSFluentWindow):
             Icon.SETTINGS_FILLED,
             NavigationItemPosition.BOTTOM,
         )
-
+        self.stackedWidget.currentChanged.connect(self.verifyAdmin)
         self.splashScreen.finish()
 
     def initWindow(self):
@@ -112,9 +123,19 @@ class MainWindow(MSFluentWindow):
             InfoBar.success(
                 title="成功",
                 content=f"班费项添加成功~\n当前剩余: {self.publicityInterface.publicityTable.returnBalance():.2f}",
-                orient=Qt.Orientation.Horizontal,
+                orient=Qt.Orientation.Vertical,
                 isClosable=True,
                 position=InfoBarPosition.TOP,
                 duration=4000,
                 parent=self,
             )
+
+    def verifyAdmin(self, pageNum):
+
+        print(self.changedPage)
+        if self.changedPage[-1] == 1:
+            self.controlInterface.controlTable.saveInfo()
+            self.publicityInterface.reloadData()
+        if pageNum == 1:
+            self.controlInterface.verify()
+        self.changedPage.append(pageNum)
